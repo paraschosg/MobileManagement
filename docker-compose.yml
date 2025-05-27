@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: mobile_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mobile_net
+
+  app:
+    image: mobileapp
+    container_name: mobileapp_container
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql_container:3306/mobile_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: secret
+    depends_on:
+      - mysql
+    networks:
+      - mobile_net
+
+volumes:
+  mysql_data:
+
+networks:
+  mobile_net:
