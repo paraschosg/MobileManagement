@@ -48,8 +48,6 @@ public class MobilePhone {
     @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal price;
 
-    // Getters & Setters...
-
     public String getSerialNumber() { return serialNumber; }
     public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
 

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mobileapp-service
+  labels:
+    app: mobileapp
+spec:
+  selector:
+    app: mobileapp
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8080        # Εσωτερική πόρτα του service
+      targetPort: 8080  # Πόρτα του container
+      nodePort: 30080   # Εξωτερική πόρτα προσβάσιμη από τον host (π.χ. localhost:30080)

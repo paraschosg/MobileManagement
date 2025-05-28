@@ -1,9 +1,10 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  mysql:
+  mysql_container:
     image: mysql:8
     container_name: mysql_container
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: mobile_db
@@ -11,20 +12,30 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - mobile_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  app:
+  mobileapp_container:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: mobileapp
     container_name: mobileapp_container
     ports:
       - "8080:8080"
+    depends_on:
+      mysql_container:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql_container:3306/mobile_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: secret
-    depends_on:
-      - mysql
     networks:
       - mobile_net
+    restart: on-failure
 
 volumes:
   mysql_data:

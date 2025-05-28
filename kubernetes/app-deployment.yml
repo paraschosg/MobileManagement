@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mobileapp-deployment
+  labels:
+    app: mobileapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mobileapp
+  template:
+    metadata:
+      labels:
+        app: mobileapp
+    spec:
+      containers:
+        - name: mobileapp
+          image: mobileapp:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql:3306/mobile_db
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: secret
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mobileapp-service
+spec:
+  selector:
+    app: mobileapp
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
